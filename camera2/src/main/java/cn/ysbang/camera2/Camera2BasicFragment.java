@@ -76,16 +76,30 @@ public class Camera2BasicFragment extends Fragment
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
 
-    static {
+
+    public static final String CAMERA_FRONT = "1";
+    public static final String CAMERA_BACK = "0";
+
+    private void front() {
+        //前置时，照片竖直显示
+        ORIENTATIONS.append(Surface.ROTATION_0, 270);
+        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+        ORIENTATIONS.append(Surface.ROTATION_180, 90);
+        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
+
+    private void rear() {
+        //后置时，照片竖直显示
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    /**
-     * Tag for the {@link Log}.
-     */
+
+        /**
+         * Tag for the {@link Log}.
+         */
     private static final String TAG = "Camera2BasicFragment";
 
     /**
@@ -480,7 +494,7 @@ public class Camera2BasicFragment extends Fragment
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                ErrorDialog.newInstance("getString(R.string.request_permission)")
+                ErrorDialog.newInstance("request permission)")
                         .show(getChildFragmentManager(), FRAGMENT_DIALOG);
             }
         } else {
@@ -598,7 +612,7 @@ public class Camera2BasicFragment extends Fragment
         } catch (NullPointerException e) {
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
-            ErrorDialog.newInstance("getString(R.string.camera_error)")
+            ErrorDialog.newInstance("camera error)")
                     .show(getChildFragmentManager(), FRAGMENT_DIALOG);
         }
     }
@@ -773,10 +787,11 @@ public class Camera2BasicFragment extends Fragment
      * Initiate a still image capture.
      */
     private void takePicture() {
-        if (mCameraId.equals(String.valueOf(CameraCharacteristics.LENS_FACING_FRONT))) {
+        if (mCameraId.equals(CAMERA_BACK)){
             lockFocus();
-        } else if (mCameraId.equals(String.valueOf(CameraCharacteristics.LENS_FACING_BACK))) {
+        } else if (mCameraId.equals(CAMERA_FRONT)) {
             captureStillPicture();
+//            lockFocus();
         }
     }
 
@@ -846,6 +861,7 @@ public class Camera2BasicFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
+
                     showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
 //                    unlockFocus();
@@ -922,15 +938,16 @@ public class Camera2BasicFragment extends Fragment
     }
 
     public void switchCamera() {
-        if (mCameraId.equals(String.valueOf(CameraCharacteristics.LENS_FACING_BACK))) {
-            mCameraId = String.valueOf(CameraCharacteristics.LENS_FACING_FRONT);
+        if (mCameraId.equals(CAMERA_BACK)) {//后变前
+            mCameraId = CAMERA_FRONT;
             closeCamera();
             reopenCamera();
-
-        } else if (mCameraId.equals(String.valueOf(CameraCharacteristics.LENS_FACING_FRONT))) {
-            mCameraId = String.valueOf(CameraCharacteristics.LENS_FACING_BACK);
+            front();
+        } else if (mCameraId.equals(CAMERA_FRONT)) {//前变后
+            mCameraId = CAMERA_BACK;
             closeCamera();
             reopenCamera();
+            rear();
         }
     }
 
@@ -1054,7 +1071,7 @@ public class Camera2BasicFragment extends Fragment
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Fragment parent = getParentFragment();
             return new AlertDialog.Builder(getActivity())
-                    .setMessage("R.string.request_permission")
+                    .setMessage("request permission")
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
