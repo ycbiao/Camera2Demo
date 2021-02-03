@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +46,8 @@ public class FirstFragment extends Fragment {
         view.findViewById(R.id.button_first).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(),CameraActivity.class);
+//                Intent intent = new Intent(getContext(), Camera2Activity.class);
+                Intent intent = new Intent(getContext(), CameraActivity.class);
                 startActivityForResult(intent, 1);
             }
         });
