@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), CameraActivity.class);
+                Intent intent = new Intent(view.getContext(), Camera2Activity.class);
                 startActivityForResult(intent, 1);
             }
         });
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mTakePhotoUri = createMediaImageUri(this);
-        File mFile = ((File)data.getSerializableExtra(MediaStore.EXTRA_OUTPUT));
-        copyToGallery(mFile,this,mTakePhotoUri);
-        Toast.makeText(this,mTakePhotoUri.toString(),Toast.LENGTH_LONG).show();
+//        mTakePhotoUri = createMediaImageUri(this);
+//        File mFile = ((File)data.getSerializableExtra(MediaStore.EXTRA_OUTPUT));
+//        copyToGallery(mFile,this,mTakePhotoUri);
+//        Toast.makeText(this,mTakePhotoUri.toString(),Toast.LENGTH_LONG).show();
     }
 
     public static Uri createMediaImageUri(Context context){

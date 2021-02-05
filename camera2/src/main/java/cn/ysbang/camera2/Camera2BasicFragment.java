@@ -27,6 +27,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -57,12 +59,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -90,6 +97,11 @@ public class Camera2BasicFragment extends Fragment
 
     private void rear() {
         //后置时，照片竖直显示
+//        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+//        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+//        ORIENTATIONS.append(Surface.ROTATION_180, 270);
+//        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
@@ -146,6 +158,7 @@ public class Camera2BasicFragment extends Fragment
 
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
+            rear();
             openCamera(width, height);
         }
 
@@ -450,12 +463,15 @@ public class Camera2BasicFragment extends Fragment
         mRlLock = view.findViewById(R.id.rl_camera2_lock);
 
         mOutPutUri = getActivity().getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+
+        mFile = new File(getActivity().getExternalMediaDirs()[0],
+                new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.US).format(System.currentTimeMillis()) + ".jpg");
     }
 
     @Override
@@ -865,12 +881,13 @@ public class Camera2BasicFragment extends Fragment
                     showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
 //                    unlockFocus();
-                    mRlLock.post(new Runnable() {
+
+                    mRlLock.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             mRlLock.setVisibility(View.VISIBLE);
                         }
-                    });
+                    },0);
                 }
             };
 
@@ -1002,6 +1019,9 @@ public class Camera2BasicFragment extends Fragment
                 e.printStackTrace();
             } finally {
                 mImage.close();
+                FileNameMap fileNameMap = URLConnection.getFileNameMap();
+                String mimeType = fileNameMap.getContentTypeFor(mFile.getName());
+                MediaScannerConnection.scanFile(mActivity, new String[]{mFile.getAbsolutePath()}, new String[]{mimeType},null);
                 if (null != output) {
                     try {
                         output.close();
