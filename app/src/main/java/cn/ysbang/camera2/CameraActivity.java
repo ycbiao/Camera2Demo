@@ -2,19 +2,23 @@ package cn.ysbang.camera2;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.example.cameraxbasic.fragments.CameraFragment;
+import androidx.navigation.Navigation;
 
-public class CameraActivity extends FragmentActivity {
+
+public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.component_sign_camera_activity);
-        if (null == savedInstanceState) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.cl_component_sign_camera_activity_content, CameraFragment.Companion.newInstance())
-                    .commit();
-        }
+        setContentView(R.layout.camera_one_activity);
+//        Navigation.findNavController(this, R.id.fragment_container).navigate(R.id.action_permissions_to_camera);
+//        Navigation.findNavController(this, R.id.fragment_container);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+
+        return Navigation.findNavController(this, R.id.fragment_container).navigateUp();
     }
 }

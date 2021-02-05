@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.cameraxbasic.fragments
-
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,9 +34,9 @@ import com.android.example.cameraxbasic.utils.padWithDisplayCutout
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.navArgs
 import cn.ysbang.camera.BuildConfig
 import cn.ysbang.camera.R
+import cn.ysbang.camera.frg.PhotoFragment
 import com.android.example.cameraxbasic.utils.showImmersive
 import java.util.Locale
 
@@ -65,13 +64,21 @@ class GalleryFragment internal constructor() : Fragment() {
         retainInstance = true
 
         // Get root directory of media from navigation arguments
-//        val rootDirectory = File(args.rootDirectory)
+        val rootDirectory = getOutputDirectory(context)
 
         // Walk through all files in the root directory
         // We reverse the order of the list to present the last photos first
-//        mediaList = rootDirectory.listFiles { file ->
-//            EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
-//        }?.sortedDescending()?.toMutableList() ?: mutableListOf()
+        mediaList = rootDirectory.listFiles { file ->
+            EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
+        }?.sortedDescending()?.toMutableList() ?: mutableListOf()
+    }
+
+    fun getOutputDirectory(context: Context?): File {
+        val appContext = context?.applicationContext
+        val mediaDir = context?.externalMediaDirs?.firstOrNull()?.let {
+            File(it, appContext?.resources?.getString(R.string.app_name)).apply { mkdirs() } }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else appContext?.filesDir!!
     }
 
     override fun onCreateView(
@@ -118,7 +125,7 @@ class GalleryFragment internal constructor() : Fragment() {
                             .getMimeTypeFromExtension(mediaFile.extension)
                     // Get URI from our FileProvider implementation
                     val uri = FileProvider.getUriForFile(
-                            view.context, "BuildConfig.APPLICATION_ID" + ".provider", mediaFile)
+                            view.context, BuildConfig.LIBRARY_PACKAGE_NAME + ".provider", mediaFile)
                     // Set the appropriate intent extra, type, action and flags
                     putExtra(Intent.EXTRA_STREAM, uri)
                     type = mediaType

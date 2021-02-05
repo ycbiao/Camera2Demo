@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.example.cameraxbasic.fragments
+package cn.ysbang.camera.frg
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package com.android.example.cameraxbasic.fragments
-
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -47,8 +45,10 @@ import androidx.core.net.toFile
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import cn.ysbang.camera.R
+import cn.ysbang.camera.utils.CameraConst
 import cn.ysbang.camera.utils.CameraConst.KEY_EVENT_ACTION
 import cn.ysbang.camera.utils.CameraConst.KEY_EVENT_EXTRA
 import com.android.example.cameraxbasic.utils.ANIMATION_FAST_MILLIS
@@ -470,11 +470,18 @@ class CameraFragment : Fragment() {
         // Listener for button used to view the most recent photo
         controls.findViewById<ImageButton>(R.id.photo_view_button).setOnClickListener {
             // Only navigate when the gallery has photos
+            var bundle = Bundle()
+            bundle.putString(outputDirectory.absolutePath, CameraConst.EXTRA_PATH_PHOTO)
             if (true == outputDirectory.listFiles()?.isNotEmpty()) {
-//                Navigation.findNavController(
-//                        requireActivity(), R.id.fragment_container
-//                ).navigate(CameraFragmentDirections
-//                        .actionCameraToGallery(outputDirectory.absolutePath))
+                Navigation.findNavController(
+                        requireActivity(), R.id.fragment_container
+                ).navigate(
+//                        object : NavDirections {
+//                            override fun getArguments(): Bundle = bundle
+//                            override fun getActionId(): Int = R.id.action_camera_to_gallery
+//                        }
+                        R.id.action_camera_to_gallery
+                )
             }
         }
     }

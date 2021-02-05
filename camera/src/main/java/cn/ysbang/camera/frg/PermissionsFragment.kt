@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.android.example.cameraxbasic.fragments
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.ActionOnlyNavDirections
 import androidx.navigation.Navigation
 import cn.ysbang.camera.R
 
@@ -37,15 +40,33 @@ class PermissionsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
 
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         if (!hasPermissions(requireContext())) {
             // Request camera-related permissions
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         } else {
             // If permissions have already been granted, proceed
 //            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
-//                    PermissionsFragmentDirections.actionPermissionsToCamera())
+//                    ActionOnlyNavDirections(R.id.action_permissions_to_camera))
+            Navigation.findNavController(
+                    requireActivity(), R.id.fragment_container
+            ).navigate(
+                    R.id.action_permissions_to_camera
+            )
+
         }
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onRequestPermissionsResult(

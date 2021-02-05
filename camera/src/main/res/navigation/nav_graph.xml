@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.android.example.cameraxbasic.fragments.PermissionsFragment"
+        android:name="PermissionsFragment"
         android:label="PermissionsFragment" >
 
         <action
@@ -31,11 +31,12 @@
             app:popUpTo="@id/permissions_fragment"
             app:popUpToInclusive="true" />
 
+
     </fragment>
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.android.example.cameraxbasic.fragments.CameraFragment"
+        android:name="CameraFragment"
         android:label="CameraFragment" >
 
         <action
@@ -52,7 +53,7 @@
 
     <fragment
         android:id="@+id/gallery_fragment"
-        android:name="com.android.example.cameraxbasic.fragments.GalleryFragment"
+        android:name="GalleryFragment"
         android:label="GalleryFragment" >
         <argument
             android:name="root_directory"
