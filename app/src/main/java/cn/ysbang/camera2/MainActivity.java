@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), Camera2Activity.class);
+                Intent intent = new Intent(view.getContext(), CameraActivity.class);
                 startActivityForResult(intent, 1);
             }
         });

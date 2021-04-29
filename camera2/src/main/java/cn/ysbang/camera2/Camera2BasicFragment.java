@@ -437,6 +437,64 @@ public class Camera2BasicFragment extends Fragment
     }
 
     /**
+     * 获取preview合适尺寸
+     * @param choices
+     * @param textureViewWidth
+     * @param textureViewHeight
+     * @return
+     */
+    private Size choosePreviewOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight) {
+
+        //先查找preview中是否存在与surfaceview相同宽高的尺寸
+        for (Size option : choices) {
+            if ((option.getWidth() == textureViewWidth) && (option.getHeight() == textureViewHeight)) {
+                return option;
+            }
+        }
+        // 得到与传入的宽高比最接近的size
+        float reqRatio = ((float) textureViewWidth) / textureViewHeight;
+        float curRatio, deltaRatio;
+        float deltaRatioMin = Float.MAX_VALUE;
+        Size retSize = null;
+        for (Size size : choices) {
+            curRatio = ((float) size.getWidth()) / size.getHeight();
+            deltaRatio = Math.abs(reqRatio - curRatio);
+            if (deltaRatio < deltaRatioMin) {
+                deltaRatioMin = deltaRatio;
+                retSize = size;
+            }
+        }
+        return retSize;
+    }
+
+    /**
+     * 获取与比率接近的合适输出尺寸照片
+     * @param choices
+     * @return
+     */
+    private Size chooseOutputOptimalSize(Size[] choices, Size reqRatioSize){
+        float reqRatio = (float) reqRatioSize.getWidth()/reqRatioSize.getHeight();
+        float curRatio, deltaRatio;
+        float deltaRatioMin = Float.MAX_VALUE;
+        Size retSize = null;
+        for (Size size : choices) {
+            curRatio = ((float) size.getWidth()) / size.getHeight();
+            deltaRatio = Math.abs(reqRatio - curRatio);
+            if(size.getWidth() > reqRatioSize.getWidth()){
+                if (deltaRatio < deltaRatioMin) {
+                    deltaRatioMin = deltaRatio;
+                    retSize = size;
+                }else if(deltaRatio == deltaRatioMin){
+                    if(size.getWidth() > retSize.getWidth()){
+                        retSize = size;
+                    }
+                }
+            }
+        }
+        return retSize;
+    }
+
+    /**
      * 确认取消按钮外层
      */
     private RelativeLayout mRlLock;
@@ -893,7 +951,7 @@ public class Camera2BasicFragment extends Fragment
 
             mCaptureSession.stopRepeating();
             mCaptureSession.abortCaptures();
-            mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
+            mCaptureSession.capture(captureBuilder.build(), CaptureCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

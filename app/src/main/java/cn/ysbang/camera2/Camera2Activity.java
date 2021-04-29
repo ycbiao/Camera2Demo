@@ -1,5 +1,6 @@
-package cn.ysbang.camera2;
+ package cn.ysbang.camera2;
 
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.FragmentActivity;
