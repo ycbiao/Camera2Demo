@@ -200,6 +200,7 @@ public class Camera2BasicFragment extends Fragment
 
     /**
      * The {@link Size} of camera preview.
+     * setDefaultBufferSize设置预览输出view的大小，StreamConfigurationMap中取与对应尺寸，如果没取根据调试过结果来看取得时1920*1080
      */
     private Size mPreviewSize;
 
